@@ -5,11 +5,13 @@ import { CiSearch } from "react-icons/ci";
 import { Squash as Hamburger } from "hamburger-react";
 const RalewayFont = Raleway({
   subsets: ["latin"],
-  weight: "400",
+  weight: "500",
 });
 const navbar = () => {
   return (
-    <nav className=" mt-8 flex justify-between w-full items-center ">
+    <nav
+      className={` mt-8 flex  justify-between w-full items-center ${RalewayFont.className} `}
+    >
       <div className=" flex gap-6">
         <SectionButton id={"Tv Shows"}>Movie</SectionButton>
         <SectionButton id={"Movie"}>TV Shows</SectionButton>

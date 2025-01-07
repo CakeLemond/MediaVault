@@ -1,3 +1,8 @@
+import { Raleway } from "next/font/google";
+const RalewayFont = Raleway({
+  subsets: ["latin"],
+  weight: "400",
+});
 export const SectionButton = ({ id, children }) => {
   return (
     <a
