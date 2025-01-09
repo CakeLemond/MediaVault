@@ -1,4 +1,8 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
-
-export default nextConfig;
+const nextConfig = {
+    images: {
+      domains: ["image.tmdb.org"], // Allow images from TMDB
+    },
+  };
+  
+  export default nextConfig;

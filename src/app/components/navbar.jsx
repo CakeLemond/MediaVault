@@ -7,7 +7,7 @@ const RalewayFont = Raleway({
   subsets: ["latin"],
   weight: "500",
 });
-const navbar = () => {
+const navbar = ({ movieData }) => {
   return (
     <nav
       className={` mt-8 flex  justify-between w-full items-center ${RalewayFont.className} `}
