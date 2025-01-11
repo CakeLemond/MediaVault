@@ -3,9 +3,10 @@
 import Image from "next/image";
 import Hero from "./components/Hero";
 import Navbar from "./components/navbar";
+import { resolveMotionValue } from "framer-motion";
 
 export default  async function Home() {
-  let MEDIA = null
+  let MEDIA_DATA = null
   const apikey = process.env.MOVIE_APIKEY
   // const APILINKS = {
   //   TrendingLink: "https://api.themoviedb.org/3/trending/all/day?language=en-US",
@@ -25,10 +26,11 @@ export default  async function Home() {
     const PopularMediaRes = await fetch(`https://api.themoviedb.org/3/trending/all/day?language=en-US`, option)
     const PopularMediaData =  await PopularMediaRes.json()
     
-  console.log("Popular Mediass" , PopularMediaData)
+ // console.log("Popular Mediass" , PopularMediaData)
 
 
   async function GetMediaInfo() {
+    let MEDIA = {}
     let MOVIEVIDEO = []
     let MOVIEIMAGE = []
     let TVSHOWIMAGE = []
@@ -106,13 +108,19 @@ export default  async function Home() {
         movieImg: MOVIEIMAGE, 
         movieVid: MOVIEVIDEO 
       }
-    };
+    }
 
-    return MEDIA
+    return new Promise ((resolve , reject) => {
+      if (Object.keys(MEDIA).length > 0)
+        resolve(MEDIA)
+        else {
+          reject(new Error("Something is off"))
+        }
+    })
     
   }
-  GetMediaInfo()
-
+  MEDIA_DATA = await GetMediaInfo()
+  console.log("IS IT GOOD FINALLY" , MEDIA_DATA)
   
   return (
     
@@ -126,7 +134,7 @@ export default  async function Home() {
     priority // Optional for critical images
   /> */}
       <Navbar/>
-      {/* <Hero TrendingData={PopularMediaData}  /> */}
+       <Hero TrendingData={PopularMediaData} MEDIADATA={MEDIA_DATA}  /> 
       
    </main>
    

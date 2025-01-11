@@ -11,14 +11,10 @@ const Hero = ({ TrendingData, MEDIADATA }) => {
   const ArraysCaoursel = [1, 3, 4, 5, 6, 8, 9];
   const constrainsRef = useRef(null);
   const [Sliderwidth, setSliderwidth] = useState();
-  const { data, setData } = useContext(DataContext);
   const ProvideData = (MediaID, MediaType) => {
     const newState = { MediaId: `${MediaID}`, MediaType: `${MediaType}` };
     setData({ MediaId: `${MediaID}`, MediaType: `${MediaType}` });
   };
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
 
   useEffect(() => {
     console.log(
@@ -85,11 +81,12 @@ const Hero = ({ TrendingData, MEDIADATA }) => {
             eius, iusto dolore voluptas at dolor ratione neque esse veritatis
             corrupti?
           </p>
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatum
-            eius, iusto dolore voluptas at dolor ratione neque esse veritatis
-            corrupti?
-          </p>
+          <button
+            className="py-5 px-5 bg-blue-500"
+            onClick={() => console.log("MEDIA INFO ", MEDIADATA)}
+          >
+            GET INFO
+          </button>
         </div>
       </div>
     </section>
