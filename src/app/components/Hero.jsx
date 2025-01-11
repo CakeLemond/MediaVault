@@ -7,7 +7,7 @@ const BeabasFont = Bebas_Neue({
   subsets: ["latin"],
   weight: "400",
 });
-const Hero = ({ TrendingData }) => {
+const Hero = ({ TrendingData, MEDIADATA }) => {
   const ArraysCaoursel = [1, 3, 4, 5, 6, 8, 9];
   const constrainsRef = useRef(null);
   const [Sliderwidth, setSliderwidth] = useState();
@@ -19,6 +19,7 @@ const Hero = ({ TrendingData }) => {
   useEffect(() => {
     console.log(data);
   }, [data]);
+
   useEffect(() => {
     console.log(
       constrainsRef.current.scrollWidth - constrainsRef.current.offsetWidth
@@ -79,11 +80,6 @@ const Hero = ({ TrendingData }) => {
           </motion.div>
         </div>
         <div className=" w-full lg:w-[40%]">
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatum
-            eius, iusto dolore voluptas at dolor ratione neque esse veritatis
-            corrupti?
-          </p>
           <p>
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatum
             eius, iusto dolore voluptas at dolor ratione neque esse veritatis

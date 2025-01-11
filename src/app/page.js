@@ -3,35 +3,117 @@
 import Image from "next/image";
 import Hero from "./components/Hero";
 import Navbar from "./components/navbar";
-import { useContext } from "react";
-import { DataContext, usedata } from "./DataContext";
-
 
 export default  async function Home() {
-  const { PopularMovies , setPopularMovies} = usedata;
-
+  let MEDIA = null
   const apikey = process.env.MOVIE_APIKEY
-
-  const APILINKS = {
-    TrendingLink: "https://api.themoviedb.org/3/trending/all/day?language=en-US",
-    MOVIE_IMAGE: "https://api.themoviedb.org/3/movie/{movie_id}/images",
-    TVSHOWS_IMAGE: "https://api.themoviedb.org/3/tv/{series_id}/images",
-    MOVIE_VIDEO: "https://api.themoviedb.org/3/movie/{movie_id}/videos",
-    TVSHOWS_VIDEO: "https://api.themoviedb.org/3/tv/{series_id}/videos",
-  // CUSTOMIZEKEY: `https://api.themoviedb.org/3/${type}/${type_id}/${media}`
-  }
+  // const APILINKS = {
+  //   TrendingLink: "https://api.themoviedb.org/3/trending/all/day?language=en-US",
+  //   MOVIE_IMAGE: "https://api.themoviedb.org/3/movie/{movie_id}/images",
+  //   TVSHOWS_IMAGE: "https://api.themoviedb.org/3/tv/{series_id}/images",
+  //   MOVIE_VIDEO: "https://api.themoviedb.org/3/movie/{movie_id}/videos",
+  //   TVSHOWS_VIDEO: "https://api.themoviedb.org/3/tv/{series_id}/videos",
+  // // CUSTOMIZEKEY: `https://api.themoviedb.org/3/${type}/${type_id}/${media}`
+  // }
   const option = {
     method: "GET",
     headers: {
       accept: 'application/json',
-      Authorization:` Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkZWE2YWFkMjMxN2E4NzIwYjliYmVkZjcxNTU2OGNhOCIsIm5iZiI6MTczNjA1NTIyNS4xOTcsInN1YiI6IjY3N2ExOWI5MTU1MjFmODNkOTY2ZTJiZSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ._iFGRbEUMeRssLn-D_IJOFnaVNgIQnKbnKAC3lkk8ew `,
+      Authorization:` Bearer ${apikey}`,
       }
     }
-    const response = await fetch("https://api.themoviedb.org/3/trending/all/day?language=en-US", option)
-    const data =  await response.json()
-     
-  console.log(data.results[1])
-  console.log(PopularMovies)
+    const PopularMediaRes = await fetch(`https://api.themoviedb.org/3/trending/all/day?language=en-US`, option)
+    const PopularMediaData =  await PopularMediaRes.json()
+    
+  console.log("Popular Mediass" , PopularMediaData)
+
+
+  async function GetMediaInfo() {
+    let MOVIEVIDEO = []
+    let MOVIEIMAGE = []
+    let TVSHOWIMAGE = []
+    let TVSHOWVIDEO = []
+    for (let element of PopularMediaData.results) {
+      
+      // Define URLs for TV Shows and Movies
+      const TVIMAGEURL = `https://api.themoviedb.org/3/tv/${element.id}/images`;
+      const TVIMAGEVIDEO = `https://api.themoviedb.org/3/tv/${element.id}/videos`;
+      const MOVIEIMAGEURL = `https://api.themoviedb.org/3/movie/${element.id}/images`;
+      const MOVIEVIDEOURL = `https://api.themoviedb.org/3/movie/${element.id}/videos`;
+      
+      if (element.media_type === "tv") {
+       
+        try {
+          // Fetch TV data with Promise.allSettled to handle both requests
+          const TVshowData = await Promise.allSettled([
+            fetch(TVIMAGEURL, option).then((res) => res.json()),
+            fetch(TVIMAGEVIDEO, option).then((res) => res.json())
+          ]);
+  
+          // Process the responses from the Promise.allSettled
+          TVshowData.forEach((data, i ) => {
+            if (data.status === 'fulfilled') {
+              if (data.value.posters || data.value.backdrops) {
+                TVSHOWIMAGE.push(data.value)
+              }
+              else {
+                TVSHOWVIDEO.push(data.value)
+              }
+
+            } else {
+              console.error(data.reason);
+            }
+          });
+        } catch (error) {
+          console.error("Error fetching TV data:", error);
+        }
+      }
+      // Check if the media type is 'movie'
+      else if (element.media_type === "movie") {
+        try {
+          // Fetch Movie data (you can add logic for movie-related operations here)
+          const movieData = await Promise.allSettled([
+            fetch(MOVIEIMAGEURL, option).then((res) => res.json()),
+            fetch(MOVIEVIDEOURL, option).then((res) => res.json())
+          ]);
+  
+          // Process movie data here if needed
+          movieData.forEach((data, i) => {
+            if (data.status === 'fulfilled') {
+              if (data.value.posters || data.value.backdrops) {
+                MOVIEIMAGE.push(data.value)
+              }
+              else {
+                MOVIEVIDEO.push(data.value)
+              }
+
+            } else {
+              console.error(data.reason);
+            }
+          });
+        } catch (error) {
+          console.error("Error fetching movie data:", error);
+        }
+      }
+    }
+
+    MEDIA = {
+      tvShowsInfo: { 
+        TvShowIMG: TVSHOWIMAGE, 
+        TvShowVid: TVSHOWVIDEO 
+      },
+      movieData: { 
+        movieImg: MOVIEIMAGE, 
+        movieVid: MOVIEVIDEO 
+      }
+    };
+
+    return MEDIA
+    
+  }
+  GetMediaInfo()
+
+  
   return (
     
 <main className="w-[95vw] mx-auto">
@@ -44,7 +126,7 @@ export default  async function Home() {
     priority // Optional for critical images
   /> */}
       <Navbar/>
-      <Hero TrendingData={data} />
+      {/* <Hero TrendingData={PopularMediaData}  /> */}
       
    </main>
    

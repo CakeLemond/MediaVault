@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState } from "react";
 const DataContext = createContext();
 
 const DataProvider = ({ children }) => {
-  const [data, setData] = useState({});
+  const [data, setData] = useState(null);
 
   return (
     <DataContext.Provider value={{ data, setData }}>

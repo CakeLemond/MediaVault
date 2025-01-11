@@ -24,7 +24,7 @@ export default function RootLayout({ children }) {
       
       >   
     <DataProvider>
-          {children}
+      {children}
     </DataProvider>
 
       </body>
