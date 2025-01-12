@@ -109,7 +109,7 @@ export default  async function Home() {
         movieVid: MOVIEVIDEO 
       }
     }
-
+    
     return new Promise ((resolve , reject) => {
       if (Object.keys(MEDIA).length > 0)
         resolve(MEDIA)
@@ -120,8 +120,10 @@ export default  async function Home() {
     
   }
   MEDIA_DATA = await GetMediaInfo()
-  console.log("IS IT GOOD FINALLY" , MEDIA_DATA)
-  
+  console.log("hhello ddoes this works? " , MEDIA_DATA.tvShowsInfo.TvShowIMG)
+  const range1 =  MEDIA_DATA.tvShowsInfo.TvShowIMG.slice(1 , 5)
+  const range2 = MEDIA_DATA.tvShowsInfo.TvShowIMG.slice(6 , MEDIA_DATA.tvShowsInfo.TvShowIMG.length - 1 )
+  console.log("this is range 1" )
   return (
     
 <main className="w-[95vw] mx-auto">

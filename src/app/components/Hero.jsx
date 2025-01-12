@@ -2,20 +2,24 @@
 import { motion } from "framer-motion";
 import { Bebas_Neue } from "next/font/google";
 import { useRef, useEffect, useState, useContext } from "react";
-import { DataContext } from "../DataContext";
 const BeabasFont = Bebas_Neue({
   subsets: ["latin"],
   weight: "400",
 });
 const Hero = ({ TrendingData, MEDIADATA }) => {
-  const ArraysCaoursel = [1, 3, 4, 5, 6, 8, 9];
   const constrainsRef = useRef(null);
   const [Sliderwidth, setSliderwidth] = useState();
-  const ProvideData = (MediaID, MediaType) => {
-    const newState = { MediaId: `${MediaID}`, MediaType: `${MediaType}` };
-    setData({ MediaId: `${MediaID}`, MediaType: `${MediaType}` });
-  };
+  const [MediaID, setMediaID] = useState(0);
+  const [index, setIndex] = useState(3);
 
+  const findMovie = (ID) => {
+    setMediaID(ID);
+    MEDIADATA.tvShowsInfo.TvShowIMG.forEach((element, index) => {
+      if (element.id === MediaID) {
+        setIndex(index);
+      }
+    });
+  };
   useEffect(() => {
     console.log(
       constrainsRef.current.scrollWidth - constrainsRef.current.offsetWidth
@@ -27,10 +31,10 @@ const Hero = ({ TrendingData, MEDIADATA }) => {
   return (
     <section className="w-full flex flex-col h-screen bg-white mt-36 gap-6 text-white">
       <div className="w-full gap-6   sm:h-1/2 rounded-xl bg-red-500 text-center px-10 py-4 flex flex-col justify-between">
-        {/* <img
-          src={`https://image.tmdb.org/t/p/original/${TrendingData.backdrops[1].file_path}`}
+        <img
+          src={`https://image.tmdb.org/t/p/original/${MEDIADATA.tvShowsInfo.TvShowIMG[index].backdrops[1].file_path}`}
           alt=""
-        /> */}
+        />
         <div>
           <h1 className={` text-5xl  sm:text-7xl  ${BeabasFont.className} `}>
             {/* {TrendingData.results[0].title} */}
@@ -63,12 +67,7 @@ const Hero = ({ TrendingData, MEDIADATA }) => {
               {TrendingData.results.map((item, i) => (
                 <div
                   key={i}
-                  onClick={() =>
-                    ProvideData(
-                      TrendingData.results[i].id,
-                      TrendingData.results[i].media_type
-                    )
-                  }
+                  onClick={() => findMovie(TrendingData.results[i].id)}
                   className=" bg-red-500 min-w-[35vw] md:min-w-[30vw] lg:min-w-[18vw]  h-44 rounded-lg border border-white"
                 ></div>
               ))}
@@ -81,10 +80,7 @@ const Hero = ({ TrendingData, MEDIADATA }) => {
             eius, iusto dolore voluptas at dolor ratione neque esse veritatis
             corrupti?
           </p>
-          <button
-            className="py-5 px-5 bg-blue-500"
-            onClick={() => console.log("MEDIA INFO ", MEDIADATA)}
-          >
+          <button className="py-5 px-5 bg-blue-500" onClick={() => findMovie()}>
             GET INFO
           </button>
         </div>

@@ -1,1 +1,12 @@
 min-w-[35vw] md:min-w-[30vw] lg:min-w-[18vw]  h-44 rounded-lg border border-white
+
+ MEDIA = {
+      tvShowsInfo: { 
+        TvShowIMG: TVSHOWIMAGE, 
+        TvShowVid: TVSHOWVIDEO 
+      },
+      movieData: { 
+        movieImg: MOVIEIMAGE, 
+        movieVid: MOVIEVIDEO 
+      }
+    }
