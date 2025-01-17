@@ -7,43 +7,52 @@ const BeabasFont = Bebas_Neue({
   weight: "400",
 });
 const Hero = ({ TrendingData, MEDIADATA }) => {
+  // UseHooks
   const constrainsRef = useRef(null);
   const [Sliderwidth, setSliderwidth] = useState();
+  //
   const [MediaID, setMediaID] = useState(0);
-  const [index, setIndex] = useState(3);
+  const [Path, setPath] = useState(1);
+  const [index, setIndex] = useState(0);
+  //
 
-  const findMovie = (ID) => {
-    setMediaID(ID);
-    MEDIADATA.tvShowsInfo.TvShowIMG.forEach((element, index) => {
-      if (element.id === MediaID) {
-        setIndex(index);
-      }
-    });
+  // Bg Style
+  const bgStyle = {
+    backgroundImage: `url("https://image.tmdb.org/t/p/original/${Path}")`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
   };
+
+  //functions
+  const findMovie = (ID, type, item, i) => {
+    setMediaID(ID);
+    setPath(item);
+    setIndex(i);
+  };
+
+  //UseEffects
   useEffect(() => {
-    console.log(
-      constrainsRef.current.scrollWidth - constrainsRef.current.offsetWidth
-    );
     setSliderwidth(
       constrainsRef.current.scrollWidth - constrainsRef.current.offsetWidth
     );
   }, []);
+
   return (
-    <section className="w-full flex flex-col h-screen bg-white mt-36 gap-6 text-white">
-      <div className="w-full gap-6   sm:h-1/2 rounded-xl bg-red-500 text-center px-10 py-4 flex flex-col justify-between">
-        <img
-          src={`https://image.tmdb.org/t/p/original/${MEDIADATA.tvShowsInfo.TvShowIMG[index].backdrops[1].file_path}`}
-          alt=""
-        />
+    <section className="w-full flex flex-col  h-screen  mt-36 gap-6 text-white">
+      <div
+        style={bgStyle}
+        className={` w-full gap-6  sm:h-1/2 brightness-50  rounded-xl text-center px-10 py-4 flex flex-col justify-between`}
+      >
         <div>
           <h1 className={` text-5xl  sm:text-7xl  ${BeabasFont.className} `}>
-            {/* {TrendingData.results[0].title} */}
+            {TrendingData.results[index].title ||
+              TrendingData.results[index].name}
           </h1>
           <p>TV SHOWS Rated R</p>
         </div>
         <div>
           <p className="max-w-[85%] sm:max-w-[65%] md:max-w-[50%] mx-auto">
-            {/* {TrendingData.results[0].overview} */}
+            {TrendingData.results[index].overview}
           </p>
         </div>
         <div>
@@ -67,23 +76,22 @@ const Hero = ({ TrendingData, MEDIADATA }) => {
               {TrendingData.results.map((item, i) => (
                 <div
                   key={i}
-                  onClick={() => findMovie(TrendingData.results[i].id)}
+                  onClick={() => {
+                    findMovie(
+                      TrendingData.results[i].id,
+                      TrendingData.results[i].media_type,
+                      item.backdrop_path || item,
+                      i
+                    );
+                    console.log(TrendingData.results[i]);
+                  }}
                   className=" bg-red-500 min-w-[35vw] md:min-w-[30vw] lg:min-w-[18vw]  h-44 rounded-lg border border-white"
                 ></div>
               ))}
             </motion.div>
           </motion.div>
         </div>
-        <div className=" w-full lg:w-[40%]">
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatum
-            eius, iusto dolore voluptas at dolor ratione neque esse veritatis
-            corrupti?
-          </p>
-          <button className="py-5 px-5 bg-blue-500" onClick={() => findMovie()}>
-            GET INFO
-          </button>
-        </div>
+        <div className=" w-full lg:w-[40%]"></div>
       </div>
     </section>
   );
