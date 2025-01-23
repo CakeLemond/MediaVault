@@ -15,7 +15,10 @@ const Hero = ({ TrendingData, MEDIADATA }) => {
   const constrainsRef = useRef(null);
   const [Sliderwidth, setSliderwidth] = useState();
   const References = useRef(null);
-  const PressedBtn = useRef(null);
+  const LeftBtn = useRef(null);
+  const RightBtn = useRef(null);
+  const currentValue = useRef(0);
+
   //
   const [MediaID, setMediaID] = useState(0);
   const [Path, setPath] = useState(TrendingData.results[0].backdrop_path);
@@ -23,7 +26,7 @@ const Hero = ({ TrendingData, MEDIADATA }) => {
   const [MediaType, setType] = useState();
   const [lignwidth, setLignWidth] = useState(0);
   const [translateX, setTranslateX] = useState(0);
-  const currentValue = useRef(0);
+  const [Disabeled, setDisabeled] = useState(false);
   //
   let Button = null;
   //  Style
@@ -54,6 +57,8 @@ const Hero = ({ TrendingData, MEDIADATA }) => {
   }
   // Go left or right
   const Scroll = () => {
+    RightBtn.current.disabled = false;
+
     if (References.current) {
       const style = window.getComputedStyle(References.current); // Get updated style
       const transformValue = style.transform;
@@ -61,65 +66,84 @@ const Hero = ({ TrendingData, MEDIADATA }) => {
       if (transformValue !== "none") {
         const info = transformValue.match(/matrix.*\((.+)\)/)[1].split(", ");
         const infovalues = parseInt(info[4]);
-
         AdjustWidth(infovalues, Sliderwidth);
       }
     }
   };
   const AdjustWidth = (value, maxValue) => {
+    setDisabeled(false);
     if (Button === "right") {
-      if (lignwidth > 80) {
+      if (lignwidth >= 90) {
         let transformedValue = maxValue * ((100 - lignwidth) / 100);
-        console.log(`SKibidi max value ${transformedValue} `);
         setTranslateX(value - transformedValue);
+        console.log(`transformed value : ${parseInt(lignwidth)} `);
+      } else {
+        setTranslateX(value - maxValue * 0.1);
+        console.log(`btnRight: ${RightBtn.current} `);
       }
-      setTranslateX(value - maxValue * 0.1);
+    }
+    if (Button === "Left") {
+      if (lignwidth <= 10) {
+        let transformedValue = 1 - value;
+        setTranslateX(Math.abs(value));
+        console.log(`transformed value : ${Math.abs(value)} `);
+        console.log(` value : ${value} `);
+      } else {
+        setTranslateX(value + maxValue * 0.1);
+        console.log(`btnRight: ${LeftBtn.current} `);
+      }
     }
   };
+
+  // Updates Progress Bar width
+  const updateLignWidth = () => {
+    let animationId;
+    const StartAnimation = () => {
+      if (References.current) {
+        const style = window.getComputedStyle(References.current); // Get updated style
+        const transformValue = style.transform; // Extract the transform property
+
+        if (transformValue !== "none") {
+          const values = transformValue
+            .match(/matrix.*\((.+)\)/)[1]
+            .split(", ");
+          let currentValueRef = parseFloat(values[4]);
+
+          currentValue.current = currentValueRef;
+          const percentage = Math.abs((currentValueRef / Sliderwidth) * 100); // Calculate percentage
+
+          setLignWidth(percentage); // Update lignWidth state
+        }
+      }
+
+      // Call `updateLignWidth` again for continuous updates
+      animationId = requestAnimationFrame(StartAnimation);
+    };
+
+    animationId = requestAnimationFrame(StartAnimation);
+  };
+
   //UseEffects
   useEffect(() => {
-    let animationId;
-
     if (constrainsRef.current) {
-      // Set slider width initially
       const max =
         constrainsRef.current.scrollWidth - constrainsRef.current.offsetWidth;
       setSliderwidth(max);
-
-      const updateLignWidth = () => {
-        if (References.current) {
-          const style = window.getComputedStyle(References.current); // Get updated style
-          const transformValue = style.transform; // Extract the transform property
-
-          if (transformValue !== "none") {
-            const values = transformValue
-              .match(/matrix.*\((.+)\)/)[1]
-              .split(", ");
-            let currentValueRef = parseFloat(values[4]);
-
-            currentValue.current = currentValueRef;
-            const percentage = Math.abs((currentValueRef / max) * 100); // Calculate percentage
-
-            setLignWidth(percentage); // Update lignWidth state
-          }
-        }
-
-        // Call `updateLignWidth` again for continuous updates
-        animationId = requestAnimationFrame(updateLignWidth);
-      };
-
-      // Start the animation loop
-      animationId = requestAnimationFrame(updateLignWidth);
     }
-
-    // Cleanup the animation frame on component unmount
-    return () => cancelAnimationFrame(animationId);
-  }, []); // Runs once on mount
-
-  // useEffect(() => {
-  //   console.log(lignwidth);
-  //   // Log the updated lignWidth in real-time
-  // }, [lignwidth]); // Watch for lignWidth changes
+  }, []);
+  useEffect(() => {
+    if (lignwidth >= 99) {
+      RightBtn.current.disabled = true;
+    } else {
+      RightBtn.current.disabled = false;
+    }
+    if (lignwidth <= 1) {
+      LeftBtn.current.disabled = true;
+    } else {
+      LeftBtn.current.disabled = false;
+    }
+    console.log(lignwidth);
+  }, [lignwidth]);
 
   return (
     <section className="w-full flex flex-col    mt-36 gap-6 text-white h-auto">
@@ -169,6 +193,7 @@ const Hero = ({ TrendingData, MEDIADATA }) => {
               animate={{ x: translateX }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
               dragConstraints={{ right: 0, left: -Sliderwidth }}
+              onDragStart={() => updateLignWidth()}
               drag="x"
               ref={References}
             >
@@ -212,18 +237,25 @@ const Hero = ({ TrendingData, MEDIADATA }) => {
               />
             </div>
             <div className="w-[35%] text-2xl flex gap-10 items-center justify-center">
-              <IoIosArrowBack
+              <button
+                ref={LeftBtn}
                 className=" cursor-pointer"
                 onClick={() => {
                   (Button = "Left"), Scroll();
                 }}
-              />
-              <IoIosArrowForward
-                className=" cursor-pointer"
+              >
+                <IoIosArrowBack />
+              </button>
+
+              <button
+                ref={RightBtn}
                 onClick={() => {
                   (Button = "right"), Scroll();
                 }}
-              />
+                className=" cursor-pointer"
+              >
+                <IoIosArrowForward />
+              </button>
             </div>
           </div>
         </div>

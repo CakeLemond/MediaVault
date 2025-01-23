@@ -1,151 +1,21 @@
-"use client";
-import { motion } from "framer-motion";
-import { Bebas_Neue } from "next/font/google";
-import { useRef, useEffect, useState, useContext } from "react";
-import Image from "next/image";
-const BeabasFont = Bebas_Neue({
-  subsets: ["latin"],
-  weight: "400",
-});
-const Hero = ({ TrendingData, MEDIADATA }) => {
-  // UseHooks
-  const constrainsRef = useRef(null);
-  const [Sliderwidth, setSliderwidth] = useState(0);
-  //
-  const [MediaID, setMediaID] = useState(0);
-  const [Path, setPath] = useState(1);
-  const [index, setIndex] = useState(0);
-  //
-  const [IsLoading, setLoading] = useState(true);
-  const [mediaList, setMediaList] = useState([]);
-  // Variables
-  const PopularMoviesURL = `https://api.themoviedb.org/3/trending/all/day?language=en-US`;
-  const apikey = process.env.NEXT_PUBLIC_MOVIE_APIKEY;
+  const updateLignWidth = () => {
+        if (References.current) {
+          const style = window.getComputedStyle(References.current); // Get updated style
+          const transformValue = style.transform; // Extract the transform property
 
-  // Bg Style
-  const bgStyle = {
-    backgroundImage: `url("https://image.tmdb.org/t/p/original/${Path}")`,
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-  };
+          if (transformValue !== "none") {
+            const values = transformValue
+              .match(/matrix.*\((.+)\)/)[1]
+              .split(", ");
+            let currentValueRef = parseFloat(values[4]);
 
-  //functions
-  const findMovie = (ID, type, item, i) => {
-    setMediaID(ID);
-    setPath(item);
-    setIndex(i);
-    // MEDIADATA.tvShowsInfo.TvShowIMG.forEach((element, index) => {
-    //   if (element.id === ID) {
-    //     setIndex(index);
-    //   }
-    // });
-  };
+            currentValue.current = currentValueRef;
+            const percentage = Math.abs((currentValueRef / max) * 100); // Calculate percentage
 
-  const FetchApis = async () => {
-    const option = {
-      method: "GET",
-      headers: {
-        accept: "application/json",
-        Authorization: ` Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkZWE2YWFkMjMxN2E4NzIwYjliYmVkZjcxNTU2OGNhOCIsIm5iZiI6MTczNjA1NTIyNS4xOTcsInN1YiI6IjY3N2ExOWI5MTU1MjFmODNkOTY2ZTJiZSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ._iFGRbEUMeRssLn-D_IJOFnaVNgIQnKbnKAC3lkk8ew`,
-      },
-    };
-    try {
-      setLoading(true);
-      const PopularMediaRes = await fetch(PopularMoviesURL, option);
-      const PopularMediaData = await PopularMediaRes.json();
-      setMediaList(PopularMediaData);
-    } catch (error) {
-      console.error("There's an issue");
-    } finally {
-      setLoading(false);
-    }
-  };
+            setLignWidth(percentage); // Update lignWidth state
+          }
+        }
 
-  //UseEffects
-  useEffect(() => {
-    FetchApis();
-    setTimeout(() => {
-      setSliderwidth(
-        constrainsRef.current.scrollWidth - constrainsRef.current.offsetWidth
-      );
-    }, 1000);
-  }, []);
-
-  return (
-    <section className="w-full flex flex-col  h-screen  mt-36 gap-6 text-white">
-      {!IsLoading && (
-        <>
-          <div
-            style={bgStyle}
-            className={`w-full gap-6 sm:h-1/2 brightness-50 rounded-xl text-center px-10 py-4 flex flex-col justify-between`}
-          >
-            <div>
-              <h1 className={`text-5xl sm:text-7xl ${BeabasFont.className}`}>
-                {mediaList.results[index].title ||
-                  mediaList.results[index].name}
-              </h1>
-              <p>TV SHOWS Rated R</p>
-            </div>
-            <div>
-              <p className="max-w-[85%] sm:max-w-[65%] md:max-w-[50%] mx-auto">
-                {mediaList.results[index].overview}
-              </p>
-            </div>
-            <div>
-              <button className="py-3 px-3 bg-black">VIEW MORE</button>
-            </div>
-          </div>
-
-          <div className="w-full bg-blue-600 flex flex-col lg:flex lg:flex-row gap-6 py-5 text-center">
-            <div className="lg:w-[60%] w-[85%] mx-auto">
-              <h1 className={`${BeabasFont.className} text-4xl`}>
-                Trending Media
-              </h1>
-
-              <motion.div
-                className="overflow-x-hidden w-full"
-                ref={constrainsRef}
-              >
-                <motion.div
-                  className="flex gap-6 w-full"
-                  dragConstraints={{ right: 0, left: -Sliderwidth }}
-                  drag="x"
-                >
-                  {mediaList.results.map((item, i) => (
-                    <div
-                      key={i}
-                      onClick={() => {
-                        findMovie(
-                          mediaList.results[i].id,
-                          mediaList.results[i].media_type,
-                          item.backdrop_path || item,
-                          i
-                        );
-                      }}
-                      className="bg-red-500 min-w-[35vw] md:min-w-[30vw] lg:min-w-[18vw] h-44 rounded-lg border border-white"
-                    ></div>
-                  ))}
-                </motion.div>
-              </motion.div>
-            </div>
-            <div className="w-full lg:w-[40%]">
-              <p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Voluptatum eius, iusto dolore voluptas at dolor ratione neque
-                esse veritatis corrupti?
-              </p>
-              <button
-                className="py-5 px-5 bg-blue-500"
-                onClick={() => findMovie()}
-              >
-                GET INFO
-              </button>
-            </div>
-          </div>
-        </>
-      )}
-    </section>
-  );
-};
-
-export default Hero;
+        // Call `updateLignWidth` again for continuous updates
+        animationId = requestAnimationFrame(updateLignWidth);
+      };
