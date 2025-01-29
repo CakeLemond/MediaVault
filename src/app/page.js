@@ -1,9 +1,8 @@
 
 
-import Image from "next/image";
 import Hero from "./components/Hero";
 import Navbar from "./components/navbar";
-import { resolveMotionValue } from "framer-motion";
+import TvAndMovie from "./components/TvAndMovie";
 
 export default  async function Home() {
   const apikey = process.env.MOVIE_APIKEY
@@ -17,11 +16,8 @@ export default  async function Home() {
     }
     const PopularMediaRes = await fetch(`https://api.themoviedb.org/3/trending/all/day?language=en-US`, option)
     const PopularMediaData =  await PopularMediaRes.json()
-    
+  
 
-
-
- 
   return (
     
 <main className="w-[95vw] mx-auto">
@@ -29,7 +25,7 @@ export default  async function Home() {
      
       <Navbar/>
        <Hero TrendingData={PopularMediaData}   /> 
-      
+      <TvAndMovie/>
    </main>
    
   );

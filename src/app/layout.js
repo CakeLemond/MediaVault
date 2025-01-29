@@ -1,6 +1,5 @@
 import { Geist, Geist_Mono } from "next/font/google";
-import { DataProvider } from "./DataContext";
-
+import { QueryProvider } from "./components/Provider/QueryProvider";
 import "./globals.css";
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,9 +22,9 @@ export default function RootLayout({ children }) {
       <body
       
       >   
-    <DataProvider>
+      <QueryProvider>
       {children}
-    </DataProvider>
+      </QueryProvider>
 
       </body>
 

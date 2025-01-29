@@ -1,4 +1,4 @@
-import { DataContext, usedata } from "../DataContext";
+import { DataContext, usedata } from "./Provider/DataContext";
 const test = () => {
   const { data, setData } = usedata(DataContext);
 
