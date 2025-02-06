@@ -3,11 +3,11 @@ const RalewayFont = Raleway({
   subsets: ["latin"],
   weight: "400",
 });
-export const SectionButton = ({ id, children }) => {
+export const SectionButton = ({ id, children, IsLink }) => {
   return (
     <a
       className={`px-4 py-2 text-white border border-white rounded-lg cursor-pointer`}
-      href={id}
+      href={IsLink ? id : undefined}
     >
       {children}
     </a>

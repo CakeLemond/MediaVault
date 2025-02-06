@@ -7,19 +7,29 @@ const RalewayFont = Raleway({
   subsets: ["latin"],
   weight: "500",
 });
-const navbar = ({ movieData }) => {
+const navbar = () => {
   return (
     <nav
       className={` mt-8 flex  justify-between w-full items-center ${RalewayFont.className} `}
     >
       <div className=" flex gap-6">
-        <SectionButton id={"Tv Shows"}>Movie</SectionButton>
-        <SectionButton id={"Movie"}>TV Shows</SectionButton>
+        <SectionButton IsLink={true} id={"#TvShows"}>
+          Movie
+        </SectionButton>
+        <SectionButton IsLink={true} id={"Movie"}>
+          TV Shows
+        </SectionButton>
       </div>
       <div className="hidden lg:flex gap-6">
-        <SectionButton id={"Home"}>Home</SectionButton>
-        <SectionButton id={"Contact"}>Contact</SectionButton>
-        <SectionButton id={"View More"}>View More</SectionButton>
+        <SectionButton IsLink={true} id={"Home"}>
+          Home
+        </SectionButton>
+        <SectionButton IsLink={true} id={"Contact"}>
+          Contact
+        </SectionButton>
+        <SectionButton IsLink={true} id={"View More"}>
+          View More
+        </SectionButton>
       </div>
 
       <div className="flex gap-6 items-center lg:hidden">

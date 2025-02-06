@@ -32,3 +32,30 @@ export async function FetchData(id, type) {
     throw error;
   }
 }
+
+export async function FetchGenre(type) {
+  const apikey = process.env.MOVIE_APIKEY;
+
+  if (!apikey) {
+    throw new Error("API key is missing.");
+  }
+
+  const option = {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${apikey}`,
+    },
+  };
+
+  try {
+    if (!res.ok) {
+      throw new Error(`Failed to fetch data: ${res.statusText}`);
+    }
+
+    return res.json();
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    throw error;
+  }
+}

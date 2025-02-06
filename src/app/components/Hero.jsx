@@ -27,10 +27,11 @@ const Hero = ({ TrendingData }) => {
   const [lignwidth, setLignWidth] = useState(0);
   const [translateX, setTranslateX] = useState(0);
   const [error, setError] = useState(null);
-  const [data, setData] = useState(null);
+  const [trailer, setTrailer] = useState(null);
   //
   let Button = null;
   //  Style
+
   const bgStyle = {
     backgroundImage: `url("https://image.tmdb.org/t/p/original/${Path}")`,
     backgroundSize: "cover",
@@ -50,15 +51,10 @@ const Hero = ({ TrendingData }) => {
     mutate({ id, type });
   };
   // Fetch APis
-  const {
-    mutate,
-    isLoading,
-    isError,
-    error: mutationError,
-  } = useMutation({
+  const { mutate, isLoading, isError } = useMutation({
     mutationFn: ({ id, type }) => FetchData(id, type), // Expecting an object with 'id' and 'MediaType'
     onSuccess: (data) => {
-      setData(data); // Set the data on success
+      setTrailer(data); // Set the data on success
       setError(null); // Clear any previous errors
     },
     onError: (error) => {
@@ -155,6 +151,12 @@ const Hero = ({ TrendingData }) => {
     }
   }, []);
   useEffect(() => {
+    if (trailer) {
+      console.log(trailer);
+    }
+  }, [trailer]);
+
+  useEffect(() => {
     if (lignwidth >= 99) {
       RightBtn.current.disabled = true;
     } else {
@@ -181,8 +183,8 @@ const Hero = ({ TrendingData }) => {
           {/* TItle */}
           <div>
             <h1 className={` text-5xl  sm:text-7xl  ${BeabasFont.className} `}>
-              {TrendingData.results[index].title ||
-                TrendingData.results[index].name}
+              {TrendingData?.results[index]?.title ||
+                TrendingData?.results[index]?.name}
             </h1>
             <p className="text-xl">
               {MediaType === "tv" ? "TV Shows" : "MOVIE"}
@@ -286,17 +288,21 @@ const Hero = ({ TrendingData }) => {
           <div className="">
             <h2 className={`text-4xl ${BeabasFont.className}`}>View Trailer</h2>
           </div>
-          {data && (
-            <iframe
-              src={`https://www.youtube.com/embed/${
-                data.results.find((video) => video.type === "Trailer").key
-              }`}
-              title="YouTube video player"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              className="w-full h-[14.5rem]  rounded-xl"
-            ></iframe>
-          )}
+          {isLoading && <p>Loading...</p>}
+          {trailer &&
+            !isLoading &&
+            trailer.results.find((video) => video.type === "Trailer") && (
+              <iframe
+                src={`https://www.youtube.com/embed/${
+                  trailer.results.find((video) => video.type === "Trailer")
+                    ?.key || "TPueuoSX1m0"
+                }`}
+                title="YouTube video player"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="w-full h-[14.5rem]  rounded-xl"
+              ></iframe>
+            )}
         </div>
       </div>
     </section>
